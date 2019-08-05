@@ -17,18 +17,38 @@ import { Observable } from 'rxjs';
 type Callback = (err: any) => void;
 
 declare namespace Generator {
-    type Question<T extends Answers = Answers> = inquirer.DistinctQuestion<T> & {
-        /**
-         * whether to store the user's previous answer
-         */
-        store?: boolean;
-    };
+    /**
+     * Represents answers to questions.
+     */
     type Answers = inquirer.Answers;
 
+    /**
+     * Represents a question.
+     */
+    type Question<T extends Answers = Answers> = inquirer.Question<T>;
+
+    /**
+     * Represents a storable question.
+     */
+    interface StorableQuestion<T extends Answers = Answers> extends Question<T> {
+        /**
+         * A value indicating whether to store the user's previous answer.
+         */
+        store?: boolean;
+    }
+
+    /**
+     * Represents a question.
+     */
+    type DistinctQuestion<T extends Answers = Answers> = inquirer.DistinctQuestion<T> & StorableQuestion<T>;
+
+    /**
+     * Provides a set of questions.
+     */
     type Questions<A extends Answers = Answers> = (
-        | Question<A>
-        | Array<Question<A>>
-        | Observable<Question<A>>
+        | DistinctQuestion<A>
+        | Array<DistinctQuestion<A>>
+        | Observable<DistinctQuestion<A>>
     );
 
     class Storage {
